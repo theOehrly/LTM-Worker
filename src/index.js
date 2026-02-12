@@ -11,6 +11,18 @@ Authentication is done using a pre-shared key that is passed in the X-FASTF1-LIV
 
 export default {
 	async fetch(request, env) {
+		// Do hacky observability via log to console
+		const ip = request.headers.get('CF-Connecting-IP');
+		const userAgent = request.headers.get('User-Agent');
+
+		console.log({
+			ip,
+			userAgent,
+			url: request.url,
+			method: request.method,
+			timestamp: new Date().toISOString(),
+		});
+
 		const url = new URL(request.url);
 
 		// only allow requests to the /static/ path
@@ -22,6 +34,7 @@ export default {
 		const key = url.pathname.slice(8);
 
 		const CACHE_MAX_AGE = env.MAX_CACHE_AGE || 3600;
+		const NOT_FOUND_DELAY = env.NOT_FOUND_DELAY || 100;
 
 		// verify the request method and authentication
 		const supportedMethods = ['GET', 'PUT', 'DELETE'];
@@ -41,7 +54,7 @@ export default {
 			const b = encoder.encode(AUTH_KEY_SECRET);
 
 			if (a.byteLength === b.byteLength) {
-				var isAuthenticated = (crypto.subtle.timingSafeEqual(a, b));
+				isAuthenticated = (crypto.subtle.timingSafeEqual(a, b));
 			}
 		  }
 
@@ -87,6 +100,7 @@ export default {
 				const object = await env.LIVETIMING_BUCKET.get(key);
 
 				if (object === null) {
+					await new Promise(r => setTimeout(r, NOT_FOUND_DELAY));
 					return new Response('Object Not Found', { status: 404 });
 				}
 
