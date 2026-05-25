@@ -11,18 +11,6 @@ Authentication is done using a pre-shared key that is passed in the X-FASTF1-LIV
 
 export default {
 	async fetch(request, env) {
-		// Do hacky observability via log to console
-		const ip = request.headers.get('CF-Connecting-IP');
-		const userAgent = request.headers.get('User-Agent');
-
-		console.log({
-			ip,
-			userAgent,
-			url: request.url,
-			method: request.method,
-			timestamp: new Date().toISOString(),
-		});
-
 		const url = new URL(request.url);
 
 		// only allow requests to the /static/ path
