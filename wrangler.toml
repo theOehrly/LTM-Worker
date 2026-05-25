@@ -7,9 +7,15 @@ compatibility_flags = ["nodejs_compat"]
 account_id = "b9261d7f75d36ec3c0ae559737628538"
 workers_dev = true
 
+[[routes]]
+pattern = "livetiming-mirror.fastf1.dev"
+zone_name = "fastf1.dev"
+custom_domain = true
+
+
 [vars]
 MAX_CACHE_AGE = "3600"
-NOT_FOUND_DELAY = "1000"
+NOT_FOUND_DELAY = "500"
 RATE_LIMIT_REQUESTS_PER_HOUR = "200"
 RATE_LIMIT_DELAY = "0"
 
@@ -20,4 +26,3 @@ id = "554dd33886cd420c9f87f079261bef5c"
 [[r2_buckets]]
 binding = 'LIVETIMING_BUCKET'
 bucket_name = 'fastf1-livetiming-mirror'
-preview_bucket_name = 'fastf1-livetiming-mirror-dev'
