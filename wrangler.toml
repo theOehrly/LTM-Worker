@@ -12,16 +12,9 @@ pattern = "livetiming-mirror.fastf1.dev"
 zone_name = "fastf1.dev"
 custom_domain = true
 
-
 [vars]
 MAX_CACHE_AGE = "3600"
-NOT_FOUND_DELAY = "500"
-RATE_LIMIT_REQUESTS_PER_HOUR = "200"
-RATE_LIMIT_DELAY = "0"
-
-[[kv_namespaces]]
-binding = "RATE_LIMIT"
-id = "554dd33886cd420c9f87f079261bef5c"
+NOT_FOUND_DELAY = "1000"
 
 [[r2_buckets]]
 binding = 'LIVETIMING_BUCKET'

@@ -85,27 +85,6 @@ export default {
 					return new Response('Status OK');
 				}
 
-				// Implement crude rate limiting using a KV store
-				const RATE_LIMIT_REQUESTS_PER_HOUR = parseInt(env.RATE_LIMIT_REQUESTS_PER_HOUR || 200);
-				const RATE_LIMIT_DELAY = parseInt(env.RATE_LIMIT_DELAY || 0);
-				const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
-				const hourBucket = Math.floor(Date.now() / 3600000);
-				const rlKey = `${ip}:${hourBucket}`;
-
-				const rlCount = parseInt(await env.RATE_LIMIT.get(rlKey) || '0');
-				if (rlCount >= RATE_LIMIT_REQUESTS_PER_HOUR) {
-					// optional based on env var: delay response for rate-limited clients in an attempt to slow them down
-					// may help if clients ignore status code 429
-					if (RATE_LIMIT_DELAY > 0) {
-						await new Promise(r => setTimeout(r, RATE_LIMIT_DELAY));
-					}
-					return new Response('Too Many Requests', {
-						status: 429,
-						headers: { 'Retry-After': '3600' },
-					});
-				}
-				await env.RATE_LIMIT.put(rlKey, String(rlCount + 1), { expirationTtl: 7200 });
-
 				const object = await env.LIVETIMING_BUCKET.get(key);
 
 				if (object === null) {
